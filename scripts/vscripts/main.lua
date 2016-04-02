@@ -24,6 +24,13 @@ end
 function CEasyGameMode:InitGameMode()
 	print( "[Nobu] CEasyGameMode:InitGameMode is loaded." )
 
+	  -- 產生隨機數種子，主要是為了程序中的隨機數考慮
+	  local timeTxt = string.gsub(string.gsub(GetSystemTime(), ':', ''), '0','') 
+	  math.randomseed(tonumber(timeTxt))--GetSystemTime	string GetSystemTime()	获取真实世界的时间
+
+	--关闭英雄买活功能
+	GameRules: GetGameModeEntity() :SetBuybackEnabled(false) 
+
 	--設置遊戲準備時間
 	GameRules:SetPreGameTime( 0.00 )
 

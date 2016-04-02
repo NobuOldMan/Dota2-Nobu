@@ -182,6 +182,11 @@ local hero 	   = p: GetAssignedHero()
     AddFOWViewer(2,Vector(0,0),100000.0,500.0,false)--天辉方单位在以坐标(0,0)半径1000.0范围内拥有全部视野，持续5秒
   end
 
+  --if string.sub(s,0,0) == "" then
+  if s == "SendCustomMessage" then
+    print(s)
+    GameRules: SendCustomMessage("Hello World",DOTA_TEAM_GOODGUYS,0)
+  end
 end
 
 function Ctest:InitGameMode()
