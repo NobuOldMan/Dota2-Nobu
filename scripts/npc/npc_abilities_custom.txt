@@ -1,0 +1,524 @@
+// Dota Heroes File
+"DOTAAbilities"
+{
+	"Version"		"1"
+
+	"majia"  //马甲的基本技能
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_PASSIVE | DOTA_ABILITY_BEHAVIOR_HIDDEN"
+
+		"Modifiers"
+		{
+			"modifier_majia"
+			{
+				"Passive"		"1"
+				"IsHidden"		"1"
+
+				"States"
+				{
+					"MODIFIER_STATE_NO_HEALTH_BAR"	"MODIFIER_STATE_VALUE_ENABLED" //隐藏血条
+					"MODIFIER_STATE_MAGIC_IMMUNE"	"MODIFIER_STATE_VALUE_ENABLED" //魔法免疫
+					"MODIFIER_STATE_ATTACK_IMMUNE"	"MODIFIER_STATE_VALUE_ENABLED" //攻击免疫
+					"MODIFIER_STATE_UNSELECTABLE"	"MODIFIER_STATE_VALUE_ENABLED" //不可选择
+					"MODIFIER_STATE_NO_UNIT_COLLISION"	"MODIFIER_STATE_VALUE_ENABLED" //无碰撞
+				}
+			}
+		}
+	}
+
+	//斯温，致命
+	"sven_ability1"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityTextureName"	"sven_great_cleave"
+
+		"OnSpellStart"
+		{
+			"ApplyModifier"
+			{
+				"Target" 			"CASTER"
+				"ModifierName"		"modifier_sven_ability1"
+			}
+			"FireSound"
+			{
+				"EffectName"		"Hero_Sven.WarCry"
+				"Target"  			"CASTER"
+			}
+		}
+
+		"Modifiers"
+		{
+			"modifier_sven_ability1"
+			{
+				"Duration"			"%duration"
+
+				"Properties"
+				{
+					"MODIFIER_PROPERTY_PREATTACK_CRITICALSTRIKE"	"%critical_struke" //致命一击
+				}
+			}
+		}
+
+		"AbilitySpecial"
+		{
+			"01"  //持续时间
+			{
+				"var_type"			"FIELD_FLOAT"
+				"duration"			"2 3 4 5"
+			}
+			"02"  //暴击倍数 critical_struke
+			{
+				"var_type"			"FIELD_INTEGER"
+				"critical_struke"	"120 140 160 180"
+			}
+		}
+	}
+
+	//斯温，残影
+	"sven_ability2"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityTextureName"	"sven_warcry"
+
+		"Modifiers"
+		{
+			"modifier_sven_ability2"
+			{
+				"Passive"		"1"
+				"IsHidden"		"1"
+				"IsPurgable"	"0"
+
+				"OnAttack"  //攻击前摇正常结束就触发，强制停止攻击前摇不算
+				{
+					"Random" 
+					{
+						"Chance"			"%chance" //触发概率
+						"PseudeoRandom"		"DOTA_PSEUDO_RANDOM_JUGG_CRIT" 
+						"OnSuccess"  //触发成功就运行脚本
+						{
+							"RunScript"
+							{
+								"ScriptFile" 	"scripts/vscripts/abilities/abilitySven.lua"
+								"Target"		"UNIT"
+								"Function"		"Ability2"
+							}
+						}
+					}
+				}
+			}
+
+			"modifier_sven_ability2_buff"
+			{
+				"IsHidden"		"1"
+				"IsPurgable"	"0"
+				"Duration"		"%duration"
+
+				"States"
+				{
+					"MODIFIER_STATE_NO_HEALTH_BAR"	"MODIFIER_STATE_VALUE_ENABLED" //隐藏血条
+					"MODIFIER_STATE_MAGIC_IMMUNE"	"MODIFIER_STATE_VALUE_ENABLED" //魔法免疫
+					"MODIFIER_STATE_ATTACK_IMMUNE"	"MODIFIER_STATE_VALUE_ENABLED" //攻击免疫
+					"MODIFIER_STATE_UNSELECTABLE"	"MODIFIER_STATE_VALUE_ENABLED" //不可选择
+					"MODIFIER_STATE_NO_UNIT_COLLISION"	"MODIFIER_STATE_VALUE_ENABLED" //无碰撞
+				}
+
+				"Properties"
+				{
+					"MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE_ILLUSION"	"%attack"
+				}
+
+				"OnDestroy"  //BUFF消失就删除拥有这个BUFF的单位
+				{
+					"RemoveUnit"
+					{
+						"Target"		"TARGET"
+					}
+				}
+			}
+		}
+
+		"AbilitySpecial"
+		{
+			"01"  //持续时间
+			{
+				"var_type"			"FIELD_FLOAT"
+				"duration"			"5"
+			}
+			"03"  //触发概率
+			{
+				"var_type"			"FIELD_INTEGER"
+				"chance"			"20 30 40 50"
+			}
+			"02"  //残影攻击伤害
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attack"			"-80 -70 -60 -50"
+			}
+			"03"  //残影攻击伤害
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attack_tooltip"	"20 30 40 50"
+			}
+		}
+	}
+
+	//斯温，残暴
+	"sven_ability3"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityTextureName"	"sven_gods_strength"
+
+		"OnSpellStart"
+		{
+			"ApplyModifier"
+			{
+				"Target" 			"CASTER"
+				"ModifierName"		"modifier_sven_ability3"
+			}
+			"AttachEffect"
+			{
+				"EffectName"		"particles\units\heroes\hero_sven\sven_spell_gods_strength.vpcf"
+				"EffectAttachType"  "follow_origin"
+				"Target" 	 		"CASTER"
+			}
+			"FireSound"
+			{
+				"EffectName"		"Hero_Sven.GodsStrength"
+				"Target"  			"CASTER"
+			}
+		}
+
+		"Modifiers"
+		{
+			"modifier_sven_ability3"
+			{
+				"IsPurgable"	"0"
+				"Duration"		"%duration"
+
+				"Properties"
+				{
+					"MODIFIER_PROPERTY_DAMAGEOUTGOING_PERCENTAGE"	"%attack"  //攻击力百分比加成
+					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"	"%attack_speed"  //攻击速度
+					"MODIFIER_PROPERTY_BASE_ATTACK_TIME_CONSTANT"	"%attack_time"  //攻击间隔
+				}
+			}
+		}
+
+		"AbilitySpecial"
+		{
+			"01"  //持续时间
+			{
+				"var_type"			"FIELD_FLOAT"
+				"duration"			"2"
+			}
+			"02"  //残影攻击伤害
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attack"			"50 60 70 80"
+			}
+			"03"  //攻击速度
+			{
+				"var_type"			"FIELD_INTEGER"
+				"attack_speed"		"500"
+			}
+			"04"  //攻击间隔
+			{
+				"var_type"			"FIELD_FLOAT"
+				"attack_time"		"0.1"
+			}
+		}
+	}
+
+	//斯温，风暴
+	"sven_ability4"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityTextureName"	"sven_storm_bolt"
+		"AbilityType"			"DOTA_ABILITY_TYPE_ULTIMATE"
+
+		"AbilityDamage"			"200 300 400"
+
+		"OnSpellStart"
+		{
+			"FireSound"
+			{
+				"EffectName"		"Hero_Sven.StormBolt"
+				"Target"  			"CASTER"
+			}	
+			"ActOnTargets"
+			{
+				"Target"
+				{
+		            "Types"     "DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO"
+		            "Teams"     "DOTA_UNIT_TARGET_TEAM_ENEMY"
+		            "Flags"     "DOTA_UNIT_TARGET_FLAG_NOT_MAGIC_IMMUNE_ALLIES"
+		            "Center"    "CASTER"
+		            "Radius"    "%radius"
+		        }
+
+		        "Action"
+		        {
+		        	"TrackingProjectile"
+		            {
+		                "Target"			"TARGET"
+		                "EffectName"        "particles\units\heroes\hero_sven\sven_spell_storm_bolt.vpcf"
+		                "Dodgeable"         "0"
+		                "ProvidesVision"    "1"
+		                "VisionRadius"      "300"
+		                "MoveSpeed"         "1000"
+		                "SourceAttachment"  "DOTA_PROJECTILE_ATTACHMENT_ATTACK_1"
+		            }
+		        }
+			}
+		}	
+
+		"OnProjectileHitUnit"
+        {
+            "Damage"
+            {
+            	"Target"		 "TARGET"
+            	"Type"			 "DAMAGE_TYPE_MAGICAL"
+            	"Damage"		 "%AbilityDamage"
+            }
+            "FireSound"
+			{
+				"EffectName"	"Hero_Sven.StormBoltImpact"
+				"Target"  		"TARGET"
+			}
+        }
+
+        "AbilitySpecial"
+		{
+			"01"  //持续时间
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"500"
+			}
+		}
+	}
+
+	//莉娜 龙破斩
+	"lina_ability1"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_POINT"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityTextureName"	"lina_dragon_slave"
+
+		"AbilityCastPoint"      "0.5"
+		"AbilityCastRange"		"1000"
+		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_1"
+
+		"AbilityCooldown"       "10"
+		"AbilityManaCost"		"90 100 110 120"
+
+		"AbilityDamage"         "100 175 250 325"
+
+		"precache" //缓存特效
+        {
+            "particle_folder"       "particles/econ/items/lina"
+        }
+
+		"OnSpellStart"
+		{
+			"RunScript"
+			{
+				"ScriptFile" 	"scripts/vscripts/abilities/abilityLina.lua"
+				"Target"		"POINT"
+				"Function"		"OnAbility1"
+			}
+			"FireSound"
+			{
+				"EffectName"		"Hero_Lina.DragonSlave"
+				"Target"  			"CASTER"
+			}
+		}
+
+		//在RunScript中通过Lua施放了线性投射物，这里可以响应命中目标
+		"OnProjectileHitUnit"  
+        {
+        	"DeleteOnHit"        "0"  //命中之后不删除投射物
+            "Damage"
+            {
+            	"Target"		 "TARGET"
+            	"Type"			 "DAMAGE_TYPE_MAGICAL"
+            	"Damage"		 "%AbilityDamage"
+            }
+
+            "Knockback"  //击退
+            {
+            	"Target"		"TARGET"
+            	"Center"		"CASTER"
+            	"Duration"		"0.5"
+            	"Distance"		"100"
+            	"Height"		"0"	
+            	"IsFixedDistance"	"0"
+            	"ShouldStun"	"1"
+            }
+
+            "ApplyModifier"  //添加相位移动，防止卡位
+            {
+            	"Duration"			"0.6"
+            	"Target" 			"TARGET"
+            	"ModifierName"		"modifier_phased"
+            }
+        }
+
+		"AbilitySpecial"
+		{
+			"01"  //距离
+			{
+				"var_type"		"FIELD_INTEGER"
+				"distance"		"1500"
+			}
+		}
+	}
+
+	//莉娜 神力
+	"lina_ability2"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_UNIT_TARGET"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityUnitTargetType"	"DOTA_UNIT_TARGET_BASIC | DOTA_UNIT_TARGET_HERO"
+		"AbilityUnitTargetTeam"	"DOTA_UNIT_TARGET_TEAM_ENEMY"
+		"AbilityTextureName"	"lina_laguna_blade"
+
+		"AbilityCastPoint"      "0.3"
+		"AbilityCastRange"		"600"
+		"AbilityCastAnimation"	"ACT_DOTA_CAST_ABILITY_4"
+
+		"AbilityCooldown"       "15"
+		"AbilityManaCost"		"150"
+
+		"AbilityDamage"         "125 200 275 350"
+
+		"OnSpellStart"
+		{
+            "Knockback"  //击退
+            {
+            	"Target"		"TARGET"
+            	"Center"		"CASTER"
+            	"Duration"		"0.5"
+            	"Distance"		"300"
+            	"Height"		"0"	
+            	"IsFixedDistance"	"0"
+            	"ShouldStun"	"1"
+            }
+
+            "ApplyModifier"  //添加相位移动，防止卡位
+            {
+            	"Duration"			"0.6"
+            	"Target" 			"TARGET"
+            	"ModifierName"		"modifier_phased"
+            }
+
+            "Damage"
+            {
+            	"Target"		 "TARGET"
+            	"Type"			 "DAMAGE_TYPE_MAGICAL"
+            	"Damage"		 "%AbilityDamage"
+            }
+
+            "AttachEffect"  //创建特效
+            {
+            	"EffectName"		"particles\units\heroes\hero_lina\lina_spell_laguna_blade.vpcf"
+            	"EffectAttachType" 	"start_at_customorigin"
+            	"Target" 			"CASTER"
+            	"ControlPointEntities"
+            	{
+            		"CASTER"		"attach_attack1" //这里的附着点可以在编辑器查看模型中获得
+            		"TARGET"		"attach_hitloc"
+            	}
+            }
+
+            "FireSound"
+            {
+            	"EffectName"		"Ability.LagunaBladeImpact"
+            	"Target"  			"CASTER"
+            }	
+		}
+	}
+
+	//莉娜 炽魂 见npc_abilities_override.txt
+
+	//莉娜 光击阵
+	"lina_ability4"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_NO_TARGET | DOTA_ABILITY_BEHAVIOR_IMMEDIATE"
+		"AbilityUnitDamageType"	"DAMAGE_TYPE_MAGICAL"
+		"AbilityTextureName"	"lina_light_strike_array"
+		"AbilityType"			"DOTA_ABILITY_TYPE_ULTIMATE"
+
+		"OnSpellStart"
+		{
+			"RunScript"
+			{
+				"ScriptFile" 	"scripts/vscripts/abilities/abilityLina.lua"
+				"Target"		"CASTER"
+				"Function"		"OnAbility4"
+			}
+		}
+
+		"Modifiers"
+		{
+			"modifier_ability4_majia"
+			{
+				"IsHidden"		"1"
+
+				"Aura"          "modifier_ability4_majia_create"
+                "Aura_Radius"   "%radius"
+                "Aura_Teams"    "DOTA_UNIT_TARGET_TEAM_ENEMY"
+                "Aura_Types"    "DOTA_UNIT_TARGET_HERO | DOTA_UNIT_TARGET_BASIC"
+                "Aura_Flags"    "DOTA_UNIT_TARGET_FLAG_NONE"
+			}
+
+			"modifier_ability4_majia_create"
+			{
+				"IsHidden"		"1"
+
+				"OnCreated"
+				{
+					"Stun"
+					{
+						"Duration"	"2"
+						"Target"	"TARGET"
+					}
+
+					"Damage"
+					{
+						"Target"		 "TARGET"
+						"Type"			 "DAMAGE_TYPE_MAGICAL"
+						"Damage"		 "%damage"
+					}
+				}
+			}
+		}
+
+		"AbilitySpecial"
+		{
+			"01"	//马甲眩晕范围
+			{
+				"var_type"			"FIELD_INTEGER"
+				"radius"			"200"
+			}
+			"02"	//旋转距离
+			{
+				"var_type"			"FIELD_INTEGER"
+				"turn_radius"		"800"
+			}
+			"03"	//伤害
+			{
+				"var_type"			"FIELD_INTEGER"
+				"damage"			"300 350 400"
+			}
+		}
+	}
+}

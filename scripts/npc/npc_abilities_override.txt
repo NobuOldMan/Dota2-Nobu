@@ -1,0 +1,118 @@
+// Dota Heroes File
+"DOTAAbilities"
+{
+	"Version"		"1"
+
+	//莉娜 炽魂
+	//下面是修改自带技能，但是毕竟实例教程
+	//所以在下面的下面会模仿这个技能
+	// "lina_fiery_soul"
+	// {
+	// 	"AbilityDuration"				"15"
+
+	// 	"AbilitySpecial"
+	// 	{
+	// 		"01"
+	// 		{
+	// 			"var_type"					"FIELD_INTEGER"
+	// 			"fiery_soul_attack_speed_bonus"	"50 65 80 95"
+	// 		}
+	// 		"02"
+	// 		{
+	// 			"var_type"					"FIELD_INTEGER"
+	// 			"fiery_soul_move_speed_bonus"	"5 6 7 8"
+	// 		}
+	// 		"03"
+	// 		{
+	// 			"var_type"					"FIELD_INTEGER"
+	// 			"fiery_soul_max_stacks"		"8"
+	// 		}
+	// 	}
+	// }
+
+	"lina_fiery_soul"
+	{
+		"BaseClass"				"ability_datadriven"
+		"AbilityBehavior"		"DOTA_ABILITY_BEHAVIOR_PASSIVE"
+		"AbilityTextureName"	"lina_fiery_soul"
+
+		"AbilityDuration"		"10"
+
+		"Modifiers"
+		{
+			"modifier_lina_fiery_soul"
+			{
+				"Passive"		"1"
+				"IsHidden"		"1"
+
+				"OnAbilityExecuted"
+				{
+					"ApplyModifier"
+					{
+						"Target" 			"CASTER"
+						"ModifierName"		"modifier_lina_fiery_soul_buff"
+					}
+
+					"ApplyModifier"
+					{
+						"Target" 			"CASTER"
+						"ModifierName"		"modifier_lina_fiery_soul_buff_icon"
+					}
+
+					"RunScript"  //在Lua里面设置叠加数量
+					{
+						"ScriptFile" 	"scripts/vscripts/abilities/abilityLina.lua"
+						"Target"		"CASTER"
+						"Function"		"OnFierySoul"
+					}
+				}
+			}
+
+			"modifier_lina_fiery_soul_buff"  //真正有作用的BUFF
+			{
+				"IsHidden"		"1"
+				"Attributes"	"MODIFIER_ATTRIBUTE_MULTIPLE"
+
+				"Properties"
+				{
+					"MODIFIER_PROPERTY_ATTACKSPEED_BONUS_CONSTANT"	"%fiery_soul_attack_speed_bonus"
+					"MODIFIER_PROPERTY_MOVESPEED_BONUS_PERCENTAGE"	"%fiery_soul_move_speed_bonus"
+				}
+			}
+
+			"modifier_lina_fiery_soul_buff_icon"  //用于显示叠加数量
+			{
+				"Duration"		"%AbilityDuration"
+
+				"OnDestroy"
+				{
+					"RunScript"
+					{
+						"ScriptFile" 	"scripts/vscripts/abilities/abilityLina.lua"
+						"Target"		"TARGET"
+						"Function"		"DestroyFierySoul"
+					}
+				}
+			}
+		}
+
+		"AbilitySpecial"
+		{
+			"01"  //攻击速度
+			{
+				"var_type"					"FIELD_INTEGER"
+				"fiery_soul_attack_speed_bonus"	"50 65 80 95"
+			}
+			"02"  //移动速度
+			{
+				"var_type"					"FIELD_INTEGER"
+				"fiery_soul_move_speed_bonus"	"5 6 7 8"
+			}
+			"03"  //叠加数量
+			{
+				"var_type"					"FIELD_INTEGER"
+				"fiery_soul_max_stacks"		"8"
+			}
+		}
+	}
+}
